@@ -1,0 +1,43 @@
+/* The Chip executes the following function using only NAND Gate :- F(W,X,Y,Z)=((YZ)'.(XZ')'.(WZ')'.(W'X'Z)')' */
+
+CHIP Q1-FUNCTION-NAND {
+  IN w,x,y,z;
+  OUT out;
+   
+  	PARTS:
+
+	//Complements :- NAND gives the complement of a variable if both inputs are given the same.
+	Nand(a=w ,b=w , out=notw);
+	Nand(a=x , b=x, out=notx);
+	Nand(a=z ,b=z, out=notz);
+	
+	//Computes (YZ)'.
+	Nand(a=y , b=z , out=p1);
+
+	//Computes (W'X')'.
+	Nand(a=notw , b=notx , out=ip21);
+	//Computes W'X'.
+	Nand(a=ip21 , b=ip21 , out=notip21);
+	//Computes (W'X'Z)'.
+	Nand(a=notip21 , b=z , out=p2);
+
+	//Computes (WZ')'.
+	Nand(a=w , b=notz , out=p3);
+
+	//Computes (XZ')'.
+	Nand(a=x , b=notz , out=p4);
+
+	//Computes ((W'X'Z)'.(YZ)'))'.
+	Nand(a=p1 , b=p2 , out=s1);
+	//Computes (W'X'Z)'.(YZ)'.
+	Nand(a=s1 , b=s1 , out=nots1);
+	
+	//Computes ((W'X'Z)'.(YZ)'.(WZ')')'.
+	Nand(a=nots1 , b=p3 , out=s2);
+	//Computes (W'X'Z)'.(YZ)'.(WZ')'.
+	Nand(a=s2 , b=s2 , out=nots2);
+
+	//Computes ((W'X'Z)'.(YZ)'.(WZ')'.(XZ')')'.
+	Nand(a=nots2 , b=p4 , out=out);
+
+}

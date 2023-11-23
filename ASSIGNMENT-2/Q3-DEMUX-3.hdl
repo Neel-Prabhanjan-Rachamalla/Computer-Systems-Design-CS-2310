@@ -1,0 +1,81 @@
+/* The CHIP[2-bit 1-to-8 DEMUX] executes the following function :- Y00=S2'S1'S0'X0 , Y01=S2'S1'S0'X1 , Y10=S2'S1'S0X0 , Y11=S2'S1'S0X1 , Y20=S2'S1S0'X0 , Y21=S2'S1S0'X1 , Y30=S2'S1S0X0 , Y31=S2'S1S0X1 , Y40=S2S1'S0'X0 , Y41=S2S1'S0'X1 , Y50=S2S1'S0X0 , Y51=S2S1'S0X1 , Y60=S2S1S0'X0 , Y61=S2S1S0'X1 , Y70=S2S1S0X0 , Y71=S2S1S0X1 */
+
+CHIP Q3-DEMUX-3
+{
+	IN S0,S1,S2,X0,X1;
+	OUT Y00,Y01,Y10,Y11,Y20,Y21,Y30,Y31,Y40,Y41,Y50,Y51,Y60,Y61,Y70,Y71;
+
+	PARTS:
+
+	//Complements.
+	Not(in=S0 , out=notS0);
+	Not(in=S1 , out=notS1);
+	Not(in=S2 , out=notS2);
+
+	//Computes S2'S1'S0'.
+	And(a=notS2 , b=notS1 , out=ip11);
+	And(a=ip11 , b=notS0 , out=ip12);
+	//Computes S2'S1'S0'X1.
+	And(a=ip12 , b=X1 , out=Y01);
+	//Computes S2'S1'S0'X0.
+	And(a=ip12 , b=X0 , out=Y00);
+
+	//Computes S2'S1'S0.
+	And(a=notS2 , b=notS1 , out=ip21);
+	And(a=ip21 , b=S0 , out=ip22);
+	//Computes S2'S1'S0X1.
+	And(a=ip22 , b=X1 , out=Y11);
+	//Computes S2'S1'S0X0.
+	And(a=ip22 , b=X0 , out=Y10);	
+
+	//Computes S2'S1S0'.
+	And(a=notS2 , b=S1 , out=ip31);
+	And(a=ip31 , b=notS0 , out=ip32);
+	//Computes S2'S1S0'X1.
+	And(a=ip32 , b=X1 , out=Y21);
+	//Computes S2'S1S0'X0.
+	And(a=ip32 , b=X0 , out=Y20);
+
+	//Computes S2'S1S0.
+	And(a=notS2 , b=S1 , out=ip41);
+	And(a=ip41 , b=S0 , out=ip42);
+	//Computes S2'S1S0X1.
+	And(a=ip42 , b=X1 , out=Y31);
+	//Computes S2'S1S0X0.
+	And(a=ip42 , b=X0 , out=Y30);
+
+	//Computes S2S1'S0'.
+	And(a=S2 , b=notS1 , out=ip51);
+	And(a=ip51 , b=notS0 , out=ip52);
+	//Computes S2S1'S0'X1.
+	And(a=ip52 , b=X1 , out=Y41);
+	//Computes S2S1'S0'X0.
+	And(a=ip52 , b=X0 , out=Y40);
+
+	//Computes S2S1'S0.
+	And(a=S2 , b=notS1 , out=ip61);
+	And(a=ip61 , b=S0 , out=ip62);
+	//Computes S2S1'S0X1.
+	And(a=ip62 , b=X1 , out=Y51);
+	//Computes S2S1'S0X0.
+	And(a=ip62 , b=X0 , out=Y50);
+
+	//Computes S2S1S0'.
+	And(a=S2 , b=S1 , out=ip71);
+	And(a=ip71 , b=notS0 , out=ip72);
+	//Computes S2S1S0'X1.
+	And(a=ip72 , b=X1 , out=Y61);
+	//Computes S2S1S0'X0.
+	And(a=ip72 , b=X0 , out=Y60);
+
+	//Computes S2S1S0.
+	And(a=S2 , b=S1 , out=ip81);
+	And(a=ip81 , b=S0 , out=ip82);
+	//Computes S2S1S0X1.
+	And(a=ip82 , b=X1 , out=Y71);
+	//Computes S2S1S0X0.
+	And(a=ip82 , b=X0 , out=Y70);
+}
+
+
+

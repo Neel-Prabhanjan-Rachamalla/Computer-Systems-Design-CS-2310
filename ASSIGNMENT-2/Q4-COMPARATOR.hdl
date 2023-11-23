@@ -1,0 +1,34 @@
+/* The comparator chip executes the code and gives z=1 if x=y 
+                                                   =0 if x!=y */
+
+
+CHIP Q4-COMPARATOR {
+  IN x0,x1,x2,x3,x4,x5,x6,x7,y0,y1,y2,y3,y4,y5,y6,y7;
+  OUT z;
+
+  PARTS:
+
+  //checking xnor for each bit.
+  //computes x0'y0'+x0y0.
+  XNOR(a=x0,b=y0,out=t0);
+  XNOR(a=x1,b=y1,out=t1);
+  XNOR(a=x2,b=y2,out=t2);
+  XNOR(a=x3,b=y3,out=t3);
+  XNOR(a=x4,b=y4,out=t4);
+  XNOR(a=x5,b=y5,out=t5);
+  XNOR(a=x6,b=y6,out=t6);
+  XNOR(a=x7,b=y7,out=t7);
+  
+  //finding and of all the xnor evaluations. 
+  And(a=t0,b=t1,out=out0);
+  And(a=t2,b=t3,out=out1);
+  And(a=t4,b=t5,out=out2);
+  And(a=t6,b=t7,out=out3);
+
+  And(a=out0,b=out1,out=out4);
+  And(a=out2,b=out3,out=out5);
+
+  And(a=out4,b=out5,out=z);
+ //z the final bit to conform the 2 inputs bitwise are equal or not.
+
+}

@@ -1,0 +1,55 @@
+/* The CHIP[2-bit 4-to-1 MUX] executes the following function :- Y1=S1'S0'X01+S1'S0X11+S1S0'X21+S1S0X31 , Y0=S1'S0'X00+S1'S0X10+S1S0'X20+S1S0X30 */ 
+
+CHIP MUX
+{
+	IN X00,X01,X10,X11,X20,X21,X30,X31,S0,S1;
+	OUT Y0,Y1;
+
+	PARTS:
+
+	//Complements.
+	Not(in=S0 , out=notS0);
+	Not(in=S1 , out=notS1);
+
+	//Computes S1'S0'. 
+	And(a=notS1 , b=notS0 , out=ip11);
+	//Computes S1'S0'X00.
+	And(a=ip11 , b=X00 , out=p10);
+	//Computes S1'S0'X01.
+	And(a=ip11 , b=X01 , out=p11);
+
+	//Computes S1'S0.
+	And(a=notS1 , b=S0 , out=ip21);
+	//Computes S1'S0X10.
+	And(a=ip21 , b=X10 , out=p20);
+	//Computes S1'S0X11.
+	And(a=ip21 , b=X11 , out=p21);
+
+	//Computes S1S0'.
+	And(a=S1 , b=notS0 , out=ip31);
+	//Computes S1S0'X20.
+	And(a=ip31 , b=X20 , out=p30);
+	//Computes S1S0'X21.
+	And(a=ip31 , b=X21 , out=p31);
+
+	//Computes S1S0.
+	And(a=S1 , b=S0 , out=ip41);
+	//Computes S1S0X30.
+	And(a=ip41 , b=X30 , out=p40);
+	//Computes S1S0X31.
+	And(a=ip41 , b=X31 , out=p41);
+
+	//Computes S1'S0'X00+S1'S0X10.
+	Or(a=p10 , b=p20 , out=s10);
+	//Computes S1'S0'X00+S1'S0X10+S1S0'X20.
+	Or(a=s10 , b=p30 , out=s20);
+	//Computes S1'S0'X00+S1'S0X10+S1S0'X20+S1S0X30.
+	Or(a=s20 , b=p40 , out=Y0);
+	
+	//Computes S1'S0'X01+S1'S0X11.
+	Or(a=p11 , b=p21 , out=s11);
+	//Computes S1'S0'X01+S1'S0X11+S1S0'X21.
+	Or(a=s11 , b=p31 , out=s21);
+	//Computes S1'S0'X01+S1'S0X11+S1S0'X21+S1S0X31.
+	Or(a=s21 , b=p41 , out=Y1);
+} 	

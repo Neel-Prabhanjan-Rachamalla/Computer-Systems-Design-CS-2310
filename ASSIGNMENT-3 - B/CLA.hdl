@@ -1,0 +1,38 @@
+/* The CHIP [4-bit CLA] computes the following :- C(i)=C(i-1)P(i-1)+G(i-1) , S(i)=XOR(P(i),C(i)). */
+
+CHIP CLA
+{
+	IN x[4],y[4],c0;
+	OUT c3,c4,s[4];
+
+	PARTS:
+
+	//Computes P(i)=XOR(x(i),y(i)).
+	XOR(a=x[0] , b=y[0] , out=P0);
+	XOR(a=x[1] , b=y[1] , out=P1);
+	XOR(a=x[2] , b=y[2] , out=P2);
+	XOR(a=x[3] , b=y[3] , out=P3);
+
+	//Computes G(i)=x(i)y(i).
+	And(a=x[0] , b=y[0] , out=G0);
+	And(a=x[1] , b=y[1] , out=G1);
+	And(a=x[2] , b=y[2] , out=G2);
+	And(a=x[3] , b=y[3] , out=G3);
+
+	//Computes C(i)=C(i-1)P(i-1)+G(i-1).
+	And(a=P0 , b=c0 , out=ip0);
+	Or(a=ip0 , b=G0 , out=c1);
+	And(a=P1 , b=c1 , out=ip1);
+	Or(a=ip1 , b=G1 , out=c2);
+	And(a=P2 , b=c2 , out=ip2);
+	Or(a=ip2 , b=G2 , out=temp);
+	Or(a=temp , b=temp , out=c3);
+	And(a=P3 , b=temp , out=ip3);
+	Or(a=ip3 , b=G3 , out=c4);
+
+	//Computes S(i)=XOR(P(i),C(i)).
+	XOR(a=P0 , b=c0 , out=s[0]);
+	XOR(a=P1 , b=c1 , out=s[1]);
+	XOR(a=P2 , b=c2 , out=s[2]);
+	XOR(a=P3 , b=temp , out=s[3]);
+}

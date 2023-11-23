@@ -1,0 +1,56 @@
+/* The CHIP [16-bit RIPPLE CARRY ADDER(RCA)] computes the following :- X+Y=Z , X-Y=Z for both signed and unsigned integers. */
+
+CHIP Q1-RCA-16
+{
+	//U indicates signed or unsigned.
+	//U=1  if signed.
+	//U=0  if unsigned.
+	IN X[16],Y[16],U,CS;
+	OUT S[16],OF;
+
+	PARTS:
+	
+	//Z=Y  if CS=0.
+	//Z=-Y-1 if CS=1.[1's Complement].
+ 	XOR(a=Y[0] , b=CS , out=Z0);
+	XOR(a=Y[1] , b=CS , out=Z1);
+	XOR(a=Y[2] , b=CS , out=Z2);
+	XOR(a=Y[3] , b=CS , out=Z3);
+	XOR(a=Y[4] , b=CS , out=Z4);
+	XOR(a=Y[5] , b=CS , out=Z5);
+	XOR(a=Y[6] , b=CS , out=Z6);
+	XOR(a=Y[7] , b=CS , out=Z7);
+	XOR(a=Y[8] , b=CS , out=Z8);
+	XOR(a=Y[9] , b=CS , out=Z9);
+	XOR(a=Y[10] , b=CS , out=Z10);
+	XOR(a=Y[11] , b=CS , out=Z11);
+	XOR(a=Y[12] , b=CS , out=Z12);
+	XOR(a=Y[13] , b=CS , out=Z13);
+	XOR(a=Y[14] , b=CS , out=Z14);
+	XOR(a=Y[15] , b=CS , out=Z15);
+	
+	//Computes sum of indivisual bits.
+	FA(x=X[0] , y=Z0 , c0=CS , s=S[0] , c1=C1);
+	FA(x=X[1] , y=Z1 , c0=C1 , s=S[1] , c1=C2);
+	FA(x=X[2] , y=Z2 , c0=C2 , s=S[2] , c1=C3);
+	FA(x=X[3] , y=Z3 , c0=C3 , s=S[3] , c1=C4);
+	FA(x=X[4] , y=Z4 , c0=C4 , s=S[4] , c1=C5);
+	FA(x=X[5] , y=Z5 , c0=C5 , s=S[5] , c1=C6);
+	FA(x=X[6] , y=Z6 , c0=C6 , s=S[6] , c1=C7);
+	FA(x=X[7] , y=Z7 , c0=C7 , s=S[7] , c1=C8);
+	FA(x=X[8] , y=Z8 , c0=C8 , s=S[8] , c1=C9);
+	FA(x=X[9] , y=Z9 , c0=C9 , s=S[9] , c1=C10);
+	FA(x=X[10] , y=Z10 , c0=C10 , s=S[10] , c1=C11);
+	FA(x=X[11] , y=Z11 , c0=C11 , s=S[11] , c1=C12);
+	FA(x=X[12] , y=Z12 , c0=C12 , s=S[12] , c1=C13);
+	FA(x=X[13] , y=Z13 , c0=C13 , s=S[13] , c1=C14);
+	FA(x=X[14] , y=Z14 , c0=C14 , s=S[14] , c1=C15);
+	FA(x=X[15] , y=Z15 , c0=C15 , s=S[15] , c1=C16);
+
+	//Computes OF=(XOR(C16,C15.U)).(CS'+U)    [ XOR(C16,C15.U)=(XOR(Cn,Cn-1).U) + (Cn.U') ]
+	Not(in=CS , out=notCS);
+	Or(a=notCS , b=U , out=s1);
+	And(a=C15 , b=U , out=p1);
+	XOR(a=C16 , b=p1 , out=x1);
+	And(a=x1 , b=s1 , out=OF);
+}

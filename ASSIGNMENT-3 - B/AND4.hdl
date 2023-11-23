@@ -1,0 +1,15 @@
+/* The CHIP [AND with fan-in-4] executes the following :- P=a1.a2.a3.a4 */
+
+CHIP AND4 {
+      IN a1,a2,a3,a4;
+      OUT out;
+
+      PARTS:
+
+      //Computes a1.a2
+      And(a=a1 , b=a2 , out=p1);
+      //Computes a3.a4
+      And(a=a3 , b=a4 , out=p2);
+      //Computes a1.a2.a3.a4
+      And(a=p1 , b=p2 , out=out);
+}

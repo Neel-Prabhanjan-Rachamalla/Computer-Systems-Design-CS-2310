@@ -1,0 +1,27 @@
+/*The Chip executes the following function using AND,OR,NOT Gates :- F(W,X,Y,Z)=YZ + XZ' + WZ' + W'X'Z */
+
+CHIP Q1-FUNCTION
+{
+	
+	IN w,x,y,z;
+	OUT out;
+
+	PARTS:
+
+	//Complements.
+	Not(in=w , out=notw);
+	Not(in=x , out=notx);
+	Not(in=z , out=notz);
+	
+	//Product terms.
+	And(a=y , b=z , out=p1);
+	And(a=notw , b=notx , out=ip21);
+	And(a=ip21 , b=z , out=p2);
+	And(a=w , b=notz , out=p3);
+	And(a=x , b=notz , out=p4);
+
+	//Summing up terms.
+	Or(a=p1 , b=p2 , out=s1);
+	Or(a=s1 , b=p3 , out=s2);
+	Or(a=s2 , b=p4 , out=out);
+}

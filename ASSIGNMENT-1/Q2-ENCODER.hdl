@@ -1,0 +1,20 @@
+/* The Chip [ENCODER] executes the following functions :- Y1(X0,X1)=X0'X1' , Y0(X0,X2)=X0'X2' .*/ 
+
+CHIP Q2-ENCODER
+{
+	IN X0,X1,X2,X3;
+	OUT Y1,Y0;
+
+	PARTS:
+
+	//Complements.
+	Not(in=X0 , out=notX0);
+	Not(in=X1 , out=notX1);
+	Not(in=X2 , out=notX2);
+
+	//Computes X0'X1'.
+	And(a=notX0 , b=notX1 , out=Y1);
+
+	//Computes X0'X2'.
+	And(a=notX0 , b=notX2 , out=Y0);
+}

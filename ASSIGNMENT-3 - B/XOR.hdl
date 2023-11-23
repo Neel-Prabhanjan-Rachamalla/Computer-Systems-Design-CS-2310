@@ -1,0 +1,20 @@
+/* The CHIP [XOR] computes the following :- z=ab'+a'b. */
+
+CHIP XOR {
+    IN a, b;
+    OUT out;
+
+    PARTS:
+
+	//Complements.
+	Not (in=a, out=nota);
+        Not (in=b, out=notb);
+	
+	//Computes ab'.
+        And (a=a, b=notb, out=x);
+	//Computes ab'.
+        And (a=nota, b=b, out=y);
+
+	//Computes ab'+a'b.
+        Or (a=x, b=y, out=out);
+}

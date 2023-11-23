@@ -1,0 +1,46 @@
+/*The Chip[DECODER-3] executes the following functions :- Y0(X0,X1,X2)=X2'X1'X0' , Y1(X2,X1,X0)=X2'X1'X0 , Y2(X0,X1,X2)=X2'X1X0' , Y3(X0,X1,X2)=X2'X1X0 , Y4(X0,X1,X2)=X2X1'X0' ,Y5(X0,X1,X2)=X2X1'X0 , Y6(X0,X1,X2)=X2X1X0' , Y7(X0,X1,X2)=X2X1X0 .*/
+
+CHIP Q5-DECODER-3
+{
+	IN X0,X1,X2;
+	OUT Y0,Y1,Y2,Y3,Y4,Y5,Y6,Y7;
+
+	PARTS:
+
+	//Complements.
+	Not(in=X0 , out=notX0);
+	Not(in=X1 , out=notX1);
+	Not(in=X2 , out=notX2);
+
+	//Computes X2'X1'.
+	And(a=notX2 , b=notX1 , out=ip11);
+	//Computes X2'X1'X0'.
+	And(a=ip11 , b=notX0 , out=Y0);
+
+	//Computes X2'X1'X0.
+	And(a=ip11 , b=X0 , out=Y1);
+
+	//Computes X2'X1.
+	And(a=notX2 , b=X1 , out=ip31);
+	//Computes X2'X1X0'.
+	And(a=ip31 , b=notX0 , out=Y2);
+
+	//Computes X2'X1X0.
+	And(a=ip31 , b=X0 , out=Y3);
+
+	//Computes X2X1'.
+	And(a=X2 , b=notX1 , out=ip51);
+	//Computes X2X1'X0'.
+	And(a=ip51 , b=notX0 , out=Y4);
+
+	//Computes X2X1'X0.
+	And(a=ip51 , b=X0 , out=Y5);
+
+	//Computes X2X1.
+	And(a=X2 , b=X1 , out=ip71);
+	//Computes X2X1X0'.
+	And(a=ip71 , b=notX0 , out=Y6);
+
+	//Computes X2X1X0.	
+	And(a=ip71 , b=X0 , out=Y7);
+}
