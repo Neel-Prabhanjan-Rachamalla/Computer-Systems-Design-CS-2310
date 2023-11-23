@@ -1,0 +1,40 @@
+/* The CHIP[1-bit 4-to-1 MUX] executes the following function :- Y=S1'S0'X0+S1'S0X1+S1S0'X2+S1S0X3 */ 
+
+CHIP MUX4-1
+{
+	IN X0,X1,X2,X3,S0,S1;
+	OUT Y;
+
+	PARTS:
+
+	//Complements.
+	Not(in=S0 , out=notS0);
+	Not(in=S1 , out=notS1);
+
+	//Computes S1'S0'. 
+	And(a=notS1 , b=notS0 , out=ip11);
+	//Computes S1'S0'X0.
+	And(a=ip11 , b=X0 , out=p10);
+
+	//Computes S1'S0.
+	And(a=notS1 , b=S0 , out=ip21);
+	//Computes S1'S0X1.
+	And(a=ip21 , b=X1 , out=p20);
+
+	//Computes S1S0'.
+	And(a=S1 , b=notS0 , out=ip31);
+	//Computes S1S0'X2.
+	And(a=ip31 , b=X2 , out=p30);
+
+	//Computes S1S0.
+	And(a=S1 , b=S0 , out=ip41);
+	//Computes S1S0X3.
+	And(a=ip41 , b=X3 , out=p40);
+
+	//Computes S1'S0'X0+S1'S0X1.
+	Or(a=p10 , b=p20 , out=s10);
+	//Computes S1'S0'X0+S1'S0X1+S1S0'X2.
+	Or(a=s10 , b=p30 , out=s20);
+	//Computes S1'S0'X0+S1'S0X1+S1S0'X2+S1S0X3.
+	Or(a=s20 , b=p40 , out=Y);
+} 	

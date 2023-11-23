@@ -1,0 +1,33 @@
+/* The CHIP[16-bit FP - MULTIPLIER (Xs-1bit , Xe-8bits , Xm-7bits)] executes the following Z=X*Y. */
+
+CHIP Q1
+{
+	IN X[16],Y[16];
+	OUT Z[16];
+
+	PARTS:
+
+	//Computes 0,1.
+	XOR(a=X[0] , b=X[0] , out=temp);
+	Not(in=temp , out=nottemp);
+
+	//Computes mantissas' multiplication PM=1.Xm*1.Ym.
+	UMUL(XX[0]=X[0] , XX[1]=X[1] , XX[2]=X[2] , XX[3]=X[3] , XX[4]=X[4] , XX[5]=X[5] , XX[6]=X[6] , XX[7]=nottemp , YY[0]=Y[0] , YY[1]=Y[1] , YY[2]=Y[2] , YY[3]=Y[3] , YY[4]=Y[4] , YY[5]=Y[5] , YY[6]=Y[6] , YY[7]=nottemp , Z[7]=PM7 , Z8=PM8 , Z9=PM9 , Z10=PM10 , Z11=PM11 , Z12=PM12 , Z13=PM13 , Z14=PM14 , Z15=PM15);
+
+	//Computes Zm=PM(13-7) if PM15=0 , Zm=PM(14-8) if PM15=1.
+	MUX2-7(x0[0]=PM7 , x0[1]=PM8 , x0[2]=PM9 , x0[3]=PM10 , x0[4]=PM11 , x0[5]=PM12 , x0[6]=PM13 , x1[0]=PM8 , x1[1]=PM9 , x1[2]=PM10 , x1[3]=PM11 , x1[4]=PM12 , x1[5]=PM13 , x1[6]=PM14 , S0=PM15 , y[0]=Z[0] , y[1]=Z[1] , y[2]=Z[2] , y[3]=Z[3] , y[4]=Z[4] , y[5]=Z[5] , y[6]=Z[6]);
+
+	//Computes Xe+Ye.
+	ADDSUB-8(xx[0]=X[7] , xx[1]=X[8] , xx[2]=X[9] , xx[3]=X[10] , xx[4]=X[11] , xx[5]=X[12] , xx[6]=X[13] , xx[7]=X[14] , yy[0]=Y[7] , yy[1]=Y[8] , yy[2]=Y[9] , yy[3]=Y[10] , yy[4]=Y[11] , yy[5]=Y[12] , yy[6]=Y[13] , yy[7]=Y[14] , cs=temp , u=temp , ss[0]=T0 , ss[1]=T1 , ss[2]=T2 , ss[3]=T3 , ss[4]=T4 , ss[5]=T5 , ss[6]=T6 , ss[7]=T7 , c8=T8);
+	//Computes Xe+Ye-bias(127).
+	ADDSUB-9(xx[0]=T0 , xx[1]=T1 , xx[2]=T2 , xx[3]=T3 , xx[4]=T4 , xx[5]=T5 , xx[6]=T6 , xx[7]=T7 , xx[8]=T8 , yy[0]=nottemp , yy[1]=nottemp , yy[2]=nottemp , yy[3]=nottemp , yy[4]=nottemp , yy[5]=nottemp , yy[6]=nottemp , yy[7]=temp , yy[8]=temp , cs=nottemp , u=temp , ss[0]=CH00 , ss[1]=CH01 , ss[2]=CH02 , ss[3]=CH03 , ss[4]=CH04 , ss[5]=CH05 , ss[6]=CH06 , ss[7]=CH07);
+	//Computes Xe+Ye-(bias-1(126)).
+	ADDSUB-9(xx[0]=T0 , xx[1]=T1 , xx[2]=T2 , xx[3]=T3 , xx[4]=T4 , xx[5]=T5 , xx[6]=T6 , xx[7]=T7 , xx[8]=T8 , yy[0]=temp , yy[1]=nottemp , yy[2]=nottemp , yy[3]=nottemp , yy[4]=nottemp , yy[5]=nottemp , yy[6]=nottemp , yy[7]=temp , yy[8]=temp , cs=nottemp , u=temp , ss[0]=CH10 , ss[1]=CH11 , ss[2]=CH12 , ss[3]=CH13 , ss[4]=CH14 , ss[5]=CH15 , ss[6]=CH16 , ss[7]=CH17);
+
+	//Computes Ze=Xe+Ye-bias(127) if PM15=0 , Ze=Xe+Ye-(bias-1(126)) if PM15=1.
+	MUX2-8(x0[0]=CH00 , x0[1]=CH01 , x0[2]=CH02 , x0[3]=CH03 , x0[4]=CH04 , x0[5]=CH05 , x0[6]=CH06 , x0[7]=CH07 , x1[0]=CH10 , x1[1]=CH11 , x1[2]=CH12 , x1[3]=CH13 , x1[4]=CH14 , x1[5]=CH15 , x1[6]=CH16 , x1[7]=CH17 , S0=PM15 , y[0]=Z[7] , y[1]=Z[8] , y[2]=Z[9] , y[3]=Z[10] , y[4]=Z[11] , y[5]=Z[12] , y[6]=Z[13] , y[7]=Z[14]);
+
+	//Computes Zs=XOR(Xs,Ys).
+	XOR(a=X[15] , b=Y[15] , out=Z[15]);
+}
+		

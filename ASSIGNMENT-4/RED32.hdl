@@ -1,0 +1,31 @@
+/* The CHIP[3-to-2 REDUCER] reduces 3 summands to 2 summands. */
+
+CHIP RED32
+{
+	IN s0[16],s1[16],s2[16];
+	OUT o1[16],o2[16];
+
+	PARTS:
+
+	//Full adders.
+	FA(x=s0[0] , y=s1[0] , c0=s2[0] , s=o1[0] , c1=o2[1]);
+	FA(x=s0[1] , y=s1[1] , c0=s2[1] , s=o1[1] , c1=o2[2]);
+	FA(x=s0[2] , y=s1[2] , c0=s2[2] , s=o1[2] , c1=o2[3]);
+	FA(x=s0[3] , y=s1[3] , c0=s2[3] , s=o1[3] , c1=o2[4]);
+	FA(x=s0[4] , y=s1[4] , c0=s2[4] , s=o1[4] , c1=o2[5]);
+	FA(x=s0[5] , y=s1[5] , c0=s2[5] , s=o1[5] , c1=o2[6]);
+	FA(x=s0[6] , y=s1[6] , c0=s2[6] , s=o1[6] , c1=o2[7]);
+	FA(x=s0[7] , y=s1[7] , c0=s2[7] , s=o1[7] , c1=o2[8]);
+	FA(x=s0[8] , y=s1[8] , c0=s2[8] , s=o1[8] , c1=o2[9]);
+	FA(x=s0[9] , y=s1[9] , c0=s2[9] , s=o1[9] , c1=o2[10]);
+	FA(x=s0[10] , y=s1[10] , c0=s2[10] , s=o1[10] , c1=o2[11]);
+	FA(x=s0[11] , y=s1[11] , c0=s2[11] , s=o1[11] , c1=o2[12]);
+	FA(x=s0[12] , y=s1[12] , c0=s2[12] , s=o1[12] , c1=o2[13]);
+	FA(x=s0[13] , y=s1[13] , c0=s2[13] , s=o1[13] , c1=o2[14]);
+	FA(x=s0[14] , y=s1[14] , c0=s2[14] , s=o1[14] , c1=o2[15]);
+	FA(x=s0[15] , y=s1[15] , c0=s2[15] , s=o1[15]);
+
+	//Assigning '0' to o2[0].
+	XOR(a=s0[0] , b=s0[0] , out=temp);
+	And(a=temp , b=temp , out=o2[0]);
+}	

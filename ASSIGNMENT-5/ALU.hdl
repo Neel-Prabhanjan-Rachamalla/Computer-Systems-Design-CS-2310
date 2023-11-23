@@ -1,0 +1,45 @@
+/* The CHIP[ALU] executes AND , OR , XOR , ADD[BOTH SIGNED AND UNSIGNED] , SUBTRACT[BOTH SIGNED AND UNSIGNED] , MULTIPLY[BOTH SIGNED AND UNSIGNED] of two 8-bit variables. */ 
+
+CHIP ALU
+{
+	IN X[8],Y[8],C0,C1,C2,S;
+	OUT Z[8],OF,EQ;
+
+	PARTS:
+
+	//Computes '0' and '1'.
+	XOR(a=X[0] , b=X[0] , out=temp);
+	Not(in=temp , out=nottemp);
+
+	//AND OPERATION.
+	AND-8(x=X , y=Y , z[0]=CH10 , z[1]=CH11 , z[2]=CH12 , z[3]=CH13 , z[4]=CH14 , z[5]=CH15 , z[6]=CH16 , z[7]=CH17);
+	//OR OPERATION.
+	OR-8(x=X , y=Y , z[0]=CH20 , z[1]=CH21 , z[2]=CH22 , z[3]=CH23 , z[4]=CH24 , z[5]=CH25 , z[6]=CH26 , z[7]=CH27);
+	//XOR OPERATION.
+	XOR-8(x=X , y=Y , z[0]=CH30 , z[1]=CH31 , z[2]=CH32 , z[3]=CH33 , z[4]=CH34 , z[5]=CH35 , z[6]=CH36 , z[7]=CH37);
+	//ADDITION OPERATION.
+	ADDSUB-8(xx=X , yy=Y , cs=temp , u=S , ss[0]=CH40 , ss[1]=CH41 , ss[2]=CH42 , ss[3]=CH43 , ss[4]=CH44 , ss[5]=CH45 , ss[6]=CH46 , ss[7]=CH47 , of=OFA);
+	//SUBTRACTION OPERATION.
+	ADDSUB-8(xx=X , yy=Y , cs=nottemp , u=S , ss[0]=CH50 , ss[1]=CH51 , ss[2]=CH52 , ss[3]=CH53 , ss[4]=CH54 , ss[5]=CH55 , ss[6]=CH56 , ss[7]=CH57 , of=OFS);
+	//UNSIGNED MULTIPLICATION OPERATION.
+	UMUL(XX=X , YY=Y , Z[0]=CH60 , Z[1]=CH61 , Z[2]=CH62 , Z[3]=CH63 , Z[4]=CH64 , Z[5]=CH65 , Z[6]=CH66 , Z[7]=CH67 , OF=OFUM);
+	//SIGNED MULTIPLICATION OPERATION.
+	IMUL(XX=X , YY=Y , Z[0]=CH70 , Z[1]=CH71 , Z[2]=CH72 , Z[3]=CH73 , Z[4]=CH74 , Z[5]=CH75 , Z[6]=CH76 , Z[7]=CH77 , OF=OFSM);
+
+	//1st 4-to-1 MUX with NoP , AND , OR , XOR operations.
+	MUX4-8(x0[0]=temp , x0[1]=temp , x0[2]=temp , x0[3]=temp , x0[4]=temp , x0[5]=temp , x0[6]=temp , x0[7]=temp , x1[0]=CH10 , x1[1]=CH11 , x1[2]=CH12 , x1[3]=CH13 , x1[4]=CH14 , x1[5]=CH15 , x1[6]=CH16 , x1[7]=CH17 , x2[0]=CH20 , x2[1]=CH21 , x2[2]=CH22 , x2[3]=CH23 , x2[4]=CH24 , x2[5]=CH25 , x2[6]=CH26 , x2[7]=CH27 , x3[0]=CH30 , x3[1]=CH31 , x3[2]=CH32 , x3[3]=CH33 , x3[4]=CH34 , x3[5]=CH35 , x3[6]=CH36 , x3[7]=CH37 , S0=C0 , S1=C1 , y[0]=M10 , y[1]=M11 , y[2]=M12 , y[3]=M13 , y[4]=M14 , y[5]=M15 , y[6]=M16 , y[7]=M17);
+	//2nd 4-to-1 MUX with ADD , SUBTRACT , UMULTIPLY , SMULTIPLY operations.
+	MUX4-8(x0[0]=CH40 , x0[1]=CH41 , x0[2]=CH42 , x0[3]=CH43 , x0[4]=CH44 , x0[5]=CH45 , x0[6]=CH46 , x0[7]=CH47 , x1[0]=CH50 , x1[1]=CH51 , x1[2]=CH52 , x1[3]=CH53 , x1[4]=CH54 , x1[5]=CH55 , x1[6]=CH56 , x1[7]=CH57 , x2[0]=CH60 , x2[1]=CH61 , x2[2]=CH62 , x2[3]=CH63 , x2[4]=CH64 , x2[5]=CH65 , x2[6]=CH66 , x2[7]=CH67 , x3[0]=CH70 , x3[1]=CH71 , x3[2]=CH72 , x3[3]=CH73 , x3[4]=CH74 , x3[5]=CH75 , x3[6]=CH76 , x3[7]=CH77 , S0=C0 , S1=C1 , y[0]=M20 , y[1]=M21 , y[2]=M22 , y[3]=M23 , y[4]=M24 , y[5]=M25 , y[6]=M26 , y[7]=M27);
+	//2-to-1 MUX with one operation from 1st MUX and other from 2nd MUX.
+	MUX2-8(x0[0]=M10 , x0[1]=M11 , x0[2]=M12 , x0[3]=M13 , x0[4]=M14 , x0[5]=M15 , x0[6]=M16 , x0[7]=M17 , x1[0]=M20 , x1[1]=M21 , x1[2]=M22 , x1[3]=M23 , x1[4]=M24 , x1[5]=M25 , x1[6]=M26 , x1[7]=M27 , S0=C2 , y=Z);
+	
+	//Computes OF.
+	Not(in=C0 , out=notC0);
+	And(a=notC0 , b=OFA , out=pr1);
+	And(a=C0 , b=OFS , out=pr2);
+	MUX4-1(X0=pr1 , X1=pr2 , X2=OFUM , X3=OFSM , S0=C0 , S1=C1 , Y=OFF);
+	MUX2-1(x0=temp , x1=OFF , S0=C2 , y=OF);
+
+	//Comparator.
+	EQ(x=X , y=Y , z=EQ);
+}

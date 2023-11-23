@@ -1,0 +1,74 @@
+/* The CHIP[8-bit 2-to-1 MUX] executes the following function :- y=S0'x0+S0x1. */ 
+
+CHIP MUX2-8
+{
+	IN x0[8],x1[8],S0;
+	OUT y[8];
+
+	PARTS:
+
+	//Complement.
+	Not(in=S0 , out=notS0);
+
+	//Computes S0'. 
+	And(a=notS0 , b=notS0 , out=ip11);
+	//Computes S0'x0[0].
+	And(a=ip11 , b=x0[0] , out=p10);
+	//Computes S0'x0[1].
+	And(a=ip11 , b=x0[1] , out=p11);
+	//Computes S0'x0[2].
+	And(a=ip11 , b=x0[2] , out=p12);
+	//Computes S0'x0[3].
+	And(a=ip11 , b=x0[3] , out=p13);
+	//Computes S0'x0[4].
+	And(a=ip11 , b=x0[4] , out=p14);
+	//Computes S0'x0[5].
+	And(a=ip11 , b=x0[5] , out=p15);
+	//Computes S0'x0[6].
+	And(a=ip11 , b=x0[6] , out=p16);
+	//Computes S0'x0[7].
+	And(a=ip11 , b=x0[7] , out=p17);
+
+	//Computes S0.
+	And(a=S0 , b=S0 , out=ip21);
+	//Computes S0x1[0].
+	And(a=ip21 , b=x1[0] , out=p20);
+	//Computes S0x1[1].
+	And(a=ip21 , b=x1[1] , out=p21);
+	//Computes S0x1[2].
+	And(a=ip21 , b=x1[2] , out=p22);
+	//Computes S0x1[3].
+	And(a=ip21 , b=x1[3] , out=p23);
+	//Computes S0x1[4].
+	And(a=ip21 , b=x1[4] , out=p24);
+	//Computes S0x1[5].
+	And(a=ip21 , b=x1[5] , out=p25);
+	//Computes S0x1[6].
+	And(a=ip21 , b=x1[6] , out=p26);
+	//Computes S0x1[7].
+	And(a=ip21 , b=x1[7] , out=p27);
+
+	//Computes S0'x0[0]+S0x1[0].
+	Or(a=p10 , b=p20 , out=y[0]);
+	
+	//Computes S0'x0[1]+S0x1[1].
+	Or(a=p11 , b=p21 , out=y[1]);
+	
+	//Computes S0'x0[2]+S0x1[2].
+	Or(a=p12 , b=p22 , out=y[2]);
+	
+	//Computes S0'x0[3]+S0x1[3].
+	Or(a=p13 , b=p23 , out=y[3]);
+	
+	//Computes S0'x0[4]+S0x1[4].
+	Or(a=p14 , b=p24 , out=y[4]);
+	
+	//Computes S0'x0[5]+S0x1[5].
+	Or(a=p15 , b=p25 , out=y[5]);
+	
+	//Computes S0'x0[6]+S0x1[6].
+	Or(a=p16 , b=p26 , out=y[6]);
+	
+	//Computes S0'x0[7]+S0x1[7].
+	Or(a=p17 , b=p27 , out=y[7]);
+} 	

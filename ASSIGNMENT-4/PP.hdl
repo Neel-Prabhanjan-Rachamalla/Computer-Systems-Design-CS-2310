@@ -1,0 +1,19 @@
+/* The CHIP[PARTIAL PRODUCTS] the following :- z=(x7x6x5x4x3x2x1x0)*y. */
+
+CHIP PP
+{
+	IN x[8],y;
+	OUT z[8];
+
+	PARTS:
+
+	//Multiplies each bit separately.
+	And(a=x[0] , b=y , out=z[0]); 
+	And(a=x[1] , b=y , out=z[1]); 
+	And(a=x[2] , b=y , out=z[2]); 
+	And(a=x[3] , b=y , out=z[3]); 
+	And(a=x[4] , b=y , out=z[4]); 
+	And(a=x[5] , b=y , out=z[5]); 
+	And(a=x[6] , b=y , out=z[6]); 
+	And(a=x[7] , b=y , out=z[7]);
+} 

@@ -1,0 +1,25 @@
+/* The CHIP[1-bit 2-to-1 MUX] executes the following function :- y=S0'x0+S0x1. */ 
+
+CHIP MUX2-1
+{
+	IN x0,x1,S0;
+	OUT y;
+
+	PARTS:
+
+	//Complement.
+	Not(in=S0 , out=notS0);
+
+	//Computes S0'. 
+	And(a=notS0 , b=notS0 , out=ip11);
+	//Computes S0'x0.
+	And(a=ip11 , b=x0 , out=p1);
+
+	//Computes S0.
+	And(a=S0 , b=S0 , out=ip21);
+	//Computes S0x1.
+	And(a=ip21 , b=x1 , out=p2);
+
+	//Computes S0'x0+S0x1.
+	Or(a=p1 , b=p2 , out=y);
+} 	

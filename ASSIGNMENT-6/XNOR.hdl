@@ -1,0 +1,13 @@
+/* The following gate executes if both the inputs are same then it is true else false a'b'+ab */ 
+CHIP XNOR {
+  IN a,b;
+  OUT out;
+  
+  PARTS:
+  
+  Not(in=a,out=nota);
+  Not(in=b,out=notb);
+  And(a=a,b=b,out=t1);
+  And(a=nota,b=notb,out=t2);
+  Or(a=t1,b=t2,out=out);
+}

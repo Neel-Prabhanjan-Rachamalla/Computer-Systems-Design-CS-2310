@@ -1,0 +1,145 @@
+/* The CHIP[8-bit 4-to-1 MUX] executes the following function :- y=S1'S0'x0+S1'S0x1+S1S0'x2+S1S0x3. */ 
+
+CHIP MUX4-8
+{
+	IN x0[8],x1[8],x2[8],x3[8],S0,S1;
+	OUT y[8];
+
+	PARTS:
+
+	//Complements.
+	Not(in=S0 , out=notS0);
+	Not(in=S1 , out=notS1);
+
+	//Computes S1'S0'. 
+	And(a=notS1 , b=notS0 , out=ip11);
+	//Computes S1'S0'x0[0].
+	And(a=ip11 , b=x0[0] , out=p10);
+	//Computes S1'S0'x0[1].
+	And(a=ip11 , b=x0[1] , out=p11);
+	//Computes S1'S0'x0[2].
+	And(a=ip11 , b=x0[2] , out=p12);
+	//Computes S1'S0'x0[3].
+	And(a=ip11 , b=x0[3] , out=p13);
+	//Computes S1'S0'x0[4].
+	And(a=ip11 , b=x0[4] , out=p14);
+	//Computes S1'S0'x0[5].
+	And(a=ip11 , b=x0[5] , out=p15);
+	//Computes S1'S0'x0[6].
+	And(a=ip11 , b=x0[6] , out=p16);
+	//Computes S1'S0'x0[7].
+	And(a=ip11 , b=x0[7] , out=p17);
+
+	//Computes S1'S0.
+	And(a=notS1 , b=S0 , out=ip21);
+	//Computes S1'S0x1[0].
+	And(a=ip21 , b=x1[0], out=p20);
+	//Computes S1'S0x1[1].
+	And(a=ip21 , b=x1[1] , out=p21);
+	//Computes S1'S0x1[2].
+	And(a=ip21 , b=x1[2], out=p22);
+	//Computes S1'S0x1[3].
+	And(a=ip21 , b=x1[3] , out=p23);
+	//Computes S1'S0x1[4].
+	And(a=ip21 , b=x1[4], out=p24);
+	//Computes S1'S0x1[5].
+	And(a=ip21 , b=x1[5] , out=p25);
+	//Computes S1'S0x1[6].
+	And(a=ip21 , b=x1[6], out=p26);
+	//Computes S1'S0x1[7].
+	And(a=ip21 , b=x1[7] , out=p27);
+
+	//Computes S1S0'.
+	And(a=S1 , b=notS0 , out=ip31);
+	//Computes S1S0'x2[0].
+	And(a=ip31 , b=x2[0] , out=p30);
+	//Computes S1S0'x2[1].
+	And(a=ip31 , b=x2[1] , out=p31);
+	//Computes S1S0'x2[2].
+	And(a=ip31 , b=x2[2] , out=p32);
+	//Computes S1S0'x2[3].
+	And(a=ip31 , b=x2[3] , out=p33);
+	//Computes S1S0'x2[4].
+	And(a=ip31 , b=x2[4] , out=p34);
+	//Computes S1S0'x2[5].
+	And(a=ip31 , b=x2[5] , out=p35);
+	//Computes S1S0'x2[6].
+	And(a=ip31 , b=x2[6] , out=p36);
+	//Computes S1S0'x2[7].
+	And(a=ip31 , b=x2[7] , out=p37);
+
+	//Computes S1S0.
+	And(a=S1 , b=S0 , out=ip41);
+	//Computes S1S0x3[0].
+	And(a=ip41 , b=x3[0] , out=p40);
+	//Computes S1S0x3[1].
+	And(a=ip41 , b=x3[1] , out=p41);
+	//Computes S1S0x3[2].
+	And(a=ip41 , b=x3[2] , out=p42);
+	//Computes S1S0x3[3].
+	And(a=ip41 , b=x3[3] , out=p43);
+	//Computes S1S0x3[4].
+	And(a=ip41 , b=x3[4] , out=p44);
+	//Computes S1S0x3[5].
+	And(a=ip41 , b=x3[5] , out=p45);
+	//Computes S1S0x3[6].
+	And(a=ip41 , b=x3[6] , out=p46);
+	//Computes S1S0x3[7].
+	And(a=ip41 , b=x3[7] , out=p47);
+
+	//Computes S1'S0'x0[0]+S1'S0x1[0].
+	Or(a=p10 , b=p20 , out=s10);
+	//Computes S1'S0'x0[0]+S1'S0x1[0]+S1S0'x2[0].
+	Or(a=s10 , b=p30 , out=s20);
+	//Computes S1'S0'x0[0]+S1'S0x1[0]+S1S0'x2[0]+S1S0x3[0].
+	Or(a=s20 , b=p40 , out=y[0]);
+	
+	//Computes S1'S0'x0[1]+S1'S0x1[1].
+	Or(a=p11 , b=p21 , out=s11);
+	//Computes S1'S0'x0[1]+S1'S0x1[1]+S1S0'x2[1].
+	Or(a=s11 , b=p31 , out=s21);
+	//Computes S1'S0'x0[1]+S1'S0x1[1]+S1S0'x2[1]+S1S0x3[1].
+	Or(a=s21 , b=p41 , out=y[1]);
+	
+	//Computes S1'S0'x0[2]+S1'S0x1[2].
+	Or(a=p12 , b=p22 , out=s12);
+	//Computes S1'S0'x0[2]+S1'S0x1[2]+S1S0'x2[2].
+	Or(a=s12 , b=p32 , out=s22);
+	//Computes S1'S0'x0[2]+S1'S0x1[2]+S1S0'x2[2]+S1S0x3[2].
+	Or(a=s22 , b=p42 , out=y[2]);
+	
+	//Computes S1'S0'x0[3]+S1'S0x1[3].
+	Or(a=p13 , b=p23 , out=s13);
+	//Computes S1'S0'x0[3]+S1'S0x1[3]+S1S0'x2[3].
+	Or(a=s13 , b=p33 , out=s23);
+	//Computes S1'S0'x0[3]+S1'S0x1[3]+S1S0'x2[3]+S1S0x3[3].
+	Or(a=s23 , b=p43 , out=y[3]);
+	
+	//Computes S1'S0'x0[4]+S1'S0x1[4].
+	Or(a=p14 , b=p24 , out=s14);
+	//Computes S1'S0'x0[4]+S1'S0x1[4]+S1S0'x2[4].
+	Or(a=s14 , b=p34 , out=s24);
+	//Computes S1'S0'x0[4]+S1'S0x1[4]+S1S0'x2[4]+S1S0x3[4].
+	Or(a=s24 , b=p44 , out=y[4]);
+	
+	//Computes S1'S0'x0[5]+S1'S0x1[5].
+	Or(a=p15 , b=p25 , out=s15);
+	//Computes S1'S0'x0[5]+S1'S0x1[5]+S1S0'x2[5].
+	Or(a=s15 , b=p35 , out=s25);
+	//Computes S1'S0'x0[5]+S1'S0x1[5]+S1S0'x2[5]+S1S0x3[5].
+	Or(a=s25 , b=p45 , out=y[5]);
+	
+	//Computes S1'S0'x0[6]+S1'S0x1[6].
+	Or(a=p16 , b=p26 , out=s16);
+	//Computes S1'S0'x0[6]+S1'S0x1[6]+S1S0'x2[6].
+	Or(a=s16 , b=p36 , out=s26);
+	//Computes S1'S0'x0[6]+S1'S0x1[6]+S1S0'x2[6]+S1S0x3[6].
+	Or(a=s26 , b=p46 , out=y[6]);
+	
+	//Computes S1'S0'x0[7]+S1'S0x1[7].
+	Or(a=p17 , b=p27 , out=s17);
+	//Computes S1'S0'x0[7]+S1'S0x1[7]+S1S0'x2[7].
+	Or(a=s17 , b=p37 , out=s27);
+	//Computes S1'S0'x0[7]+S1'S0x1[7]+S1S0'x2[7]+S1S0x3[7].
+	Or(a=s27 , b=p47 , out=y[7]);
+} 	

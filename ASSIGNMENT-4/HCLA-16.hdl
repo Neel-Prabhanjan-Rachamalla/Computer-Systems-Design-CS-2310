@@ -1,0 +1,62 @@
+/* The CHIP [16-bit ADDER using 4-bit HCLA] computes the following :- X+Y=Z , X-Y=Z for both signed and unsigned integers. */
+
+CHIP HCLA-16
+{
+      IN X[16],Y[16],CS,U;
+      OUT S[16],OF;
+ 
+      PARTS:
+
+	//Z=Y  if CS=0.
+	//Z=-Y-1 if CS=1.[1's Complement].
+	XOR(a=Y[0] , b=CS , out=Z0);
+	XOR(a=Y[1] , b=CS , out=Z1);
+	XOR(a=Y[2] , b=CS , out=Z2);
+	XOR(a=Y[3] , b=CS , out=Z3);
+	XOR(a=Y[4] , b=CS , out=Z4);
+	XOR(a=Y[5] , b=CS , out=Z5);
+	XOR(a=Y[6] , b=CS , out=Z6);
+	XOR(a=Y[7] , b=CS , out=Z7);
+	XOR(a=Y[8] , b=CS , out=Z8);
+	XOR(a=Y[9] , b=CS , out=Z9);
+	XOR(a=Y[10] , b=CS , out=Z10);
+	XOR(a=Y[11] , b=CS , out=Z11);
+	XOR(a=Y[12] , b=CS , out=Z12);
+	XOR(a=Y[13] , b=CS , out=Z13);
+	XOR(a=Y[14] , b=CS , out=Z14);
+	XOR(a=Y[15] , b=CS , out=Z15);
+
+	//Computes sum of indivisual bits.     
+      CLA4(x[0]=X[0] , x[1]=X[1] , x[2]=X[2] , x[3]=X[3] , y[0]=Z0 , y[1]=Z1 , y[2]=Z2 , y[3]=Z3 , c0=CS , s[0]=S[0] , 
+s[1]=S[1] , s[2]=S[2] , s[3]=S[3] , PI=PI0 , GI=GI0);
+
+      And(a=PI0 , b=CS , out=ip0);
+      Or(a=ip0 , b=GI0 , out=C4);
+
+      CLA4(x[0]=X[4] , x[1]=X[5] , x[2]=X[6] , x[3]=X[7] , y[0]=Z4 , y[1]=Z5 , y[2]=Z6 , y[3]=Z7 , c0=C4 , s[0]=S[4] , 
+s[1]=S[5] , s[2]=S[6] , s[3]=S[7] , PI=PI1 , GI=GI1);
+
+      And(a=PI1 , b=C4 , out=ip1);
+      Or(a=ip1 , b=GI1 , out=C8);
+
+      CLA4(x[0]=X[8] , x[1]=X[9] , x[2]=X[10] , x[3]=X[11] , y[0]=Z8 , y[1]=Z9 , y[2]=Z10 , y[3]=Z11 , c0=C8 , s[0]=S[8] , 
+s[1]=S[9] , s[2]=S[10] , s[3]=S[11] , PI=PI2 , GI=GI2);
+
+      And(a=PI2 , b=C8 , out=ip2);
+      Or(a=ip2 , b=GI2 , out=C12);
+
+      CLA4(x[0]=X[12] , x[1]=X[13] , x[2]=X[14] , x[3]=X[15] , y[0]=Z12 , y[1]=Z13 , y[2]=Z14 , y[3]=Z15 , c0=C12 , c3=C15 , s[0]=S[12] , 
+s[1]=S[13] , s[2]=S[14] , s[3]=S[15] , PI=PI3 , GI=GI3);
+
+      And(a=PI3 , b=C12 , out=ip3);
+      Or(a=ip3 , b=GI3 , out=C16);
+
+	//Computes OF=(XOR(C15,C16.U)).(CS'+U)
+	Not(in=CS , out=notCS);
+	Or(a=notCS , b=U , out=s1);
+	And(a=C15 , b=U , out=p1);
+	XOR(a=C16 , b=p1 , out=x1);
+	And(a=x1 , b=s1 , out=OF);
+
+}
+  

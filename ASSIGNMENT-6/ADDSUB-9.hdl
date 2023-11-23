@@ -1,0 +1,43 @@
+/* The CHIP [9-bit ADDER/SUBTRACTOR using 4-bit HCLA] computes the following :- X+Y=Z , X-Y=Z for both signed and unsigned integers. */
+
+CHIP ADDSUB-9
+{
+      IN xx[9],yy[9],cs,u;
+      OUT ss[9],of;
+ 
+      PARTS:
+
+	//Z=Y  if cs=0.
+	//Z=-Y-1 if cs=1.[1's Complement].
+	XOR(a=yy[0] , b=cs , out=Z0);
+	XOR(a=yy[1] , b=cs , out=Z1);
+	XOR(a=yy[2] , b=cs , out=Z2);
+	XOR(a=yy[3] , b=cs , out=Z3);
+	XOR(a=yy[4] , b=cs , out=Z4);
+	XOR(a=yy[5] , b=cs , out=Z5);
+	XOR(a=yy[6] , b=cs , out=Z6);
+	XOR(a=yy[7] , b=cs , out=Z7);
+	XOR(a=yy[8] , b=cs , out=Z8);
+
+	//Computes sum of indivisual bits.     
+      CLA4(x[0]=xx[0] , x[1]=xx[1] , x[2]=xx[2] , x[3]=xx[3] , y[0]=Z0 , y[1]=Z1 , y[2]=Z2 , y[3]=Z3 , c0=cs , s[0]=ss[0] , s[1]=ss[1] , s[2]=ss[2] , s[3]=ss[3] , PI=PI0 , GI=GI0);
+
+      And(a=PI0 , b=cs , out=ip0);
+      Or(a=ip0 , b=GI0 , out=C4);
+
+      CLA4(x[0]=xx[4] , x[1]=xx[5] , x[2]=xx[6] , x[3]=xx[7] , y[0]=Z4 , y[1]=Z5 , y[2]=Z6 , y[3]=Z7 , c0=C4 , c3=C7 , s[0]=ss[4] , s[1]=ss[5] , s[2]=ss[6] , s[3]=ss[7] , PI=PI1 , GI=GI1);
+
+      And(a=PI1 , b=C4 , out=ip1);
+      Or(a=ip1 , b=GI1 , out=C8);
+
+	FA(x=xx[8] , y=yy[8] , c0=C8 , c1=C9 , s=ss[8]);
+
+	//Computes OF=(XOR(C9,C8.u)).(cs'+u)
+	Not(in=cs , out=notcs);
+	Or(a=notcs , b=u , out=s1);
+	And(a=C8 , b=u , out=p1);
+	XOR(a=C9 , b=p1 , out=x1);
+	And(a=x1 , b=s1 , out=of);
+
+}
+  

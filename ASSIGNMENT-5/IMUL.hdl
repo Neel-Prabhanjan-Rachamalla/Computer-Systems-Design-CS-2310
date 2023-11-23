@@ -1,0 +1,89 @@
+/* The CHIP[8-bit Wallace tree multiplier[SIGNED] circuit using carry save addition (CSA) based 3-to-2 reducers followed by CLA with higher-level propagate and generate
+terms] execute the following :- Z=X*Y. */
+
+CHIP IMUL
+{
+	IN XX[8],YY[8];
+	OUT Z[8],OF;
+	
+	PARTS:
+	//Computes Partial Products.
+	PP(x=XX , y=YY[0] , z[0]=PP00 , z[1]=PP01 , z[2]=PP02 , z[3]=PP03 , z[4]=PP04 , z[5]=PP05 , z[6]=PP06 , z[7]=PP07);
+	PP(x=XX , y=YY[1] , z[0]=PP10 , z[1]=PP11 , z[2]=PP12 , z[3]=PP13 , z[4]=PP14 , z[5]=PP15 , z[6]=PP16 , z[7]=PP17);
+	PP(x=XX , y=YY[2] , z[0]=PP20 , z[1]=PP21 , z[2]=PP22 , z[3]=PP23 , z[4]=PP24 , z[5]=PP25 , z[6]=PP26 , z[7]=PP27);
+	PP(x=XX , y=YY[3] , z[0]=PP30 , z[1]=PP31 , z[2]=PP32 , z[3]=PP33 , z[4]=PP34 , z[5]=PP35 , z[6]=PP36 , z[7]=PP37);
+	PP(x=XX , y=YY[4] , z[0]=PP40 , z[1]=PP41 , z[2]=PP42 , z[3]=PP43 , z[4]=PP44 , z[5]=PP45 , z[6]=PP46 , z[7]=PP47);
+	PP(x=XX , y=YY[5] , z[0]=PP50 , z[1]=PP51 , z[2]=PP52 , z[3]=PP53 , z[4]=PP54 , z[5]=PP55 , z[6]=PP56 , z[7]=PP57);
+	PP(x=XX , y=YY[6] , z[0]=PP60 , z[1]=PP61 , z[2]=PP62 , z[3]=PP63 , z[4]=PP64 , z[5]=PP65 , z[6]=PP66 , z[7]=PP67);
+	PP(x=XX , y=YY[7] , z[0]=PP70 , z[1]=PP71 , z[2]=PP72 , z[3]=PP73 , z[4]=PP74 , z[5]=PP75 , z[6]=PP76 , z[7]=PP77);
+
+	//Complements PP7 if YY<0.
+	XOR(a=PP70 , b=YY[7] , out=xPP70);
+	XOR(a=PP71 , b=YY[7] , out=xPP71);
+	XOR(a=PP72 , b=YY[7] , out=xPP72);
+	XOR(a=PP73 , b=YY[7] , out=xPP73);
+	XOR(a=PP74 , b=YY[7] , out=xPP74);
+	XOR(a=PP75 , b=YY[7] , out=xPP75);
+	XOR(a=PP76 , b=YY[7] , out=xPP76);
+	XOR(a=PP77 , b=YY[7] , out=xPP77);
+
+	//Computes '0'.
+	XOR(a=XX[0] , b=XX[0] , out=temp);
+	//Computes '1'.
+	Not(in=temp , out=nottemp);
+	//Converts to '0' or '1' based on YY.
+	And(a=nottemp , b=YY[7] , out=nottemp2);
+
+	//Reduces (PP0 , PP1 , PP2) to (S10 , C10).
+	RED32(s0[0]=PP00 , s0[1]=PP01 , s0[2]=PP02 , s0[3]=PP03 , s0[4]=PP04 , s0[5]=PP05 , s0[6]=PP06 , s0[7]=PP07 , s0[8]=PP07 , s0[9]=PP07 , s0[10]=PP07 , s0[11]=PP07 , s0[12]=PP07 , s0[13]=PP07 , s0[14]=PP07 , s0[15]=PP07 , s1[0]=temp , s1[1]=PP10 , s1[2]=PP11 , s1[3]=PP12 , s1[4]=PP13 , s1[5]=PP14 , s1[6]=PP15 , s1[7]=PP16 , s1[8]=PP17 , s1[9]=PP17 , s1[10]=PP17 , s1[11]=PP17 , s1[12]=PP17 , s1[13]=PP17 , s1[14]=PP17 , s1[15]=PP17 , s2[0]=temp , s2[1]=temp , s2[2]=PP20 , s2[3]=PP21 , s2[4]=PP22 , s2[5]=PP23 , s2[6]=PP24 , s2[7]=PP25 , s2[8]=PP26 , s2[9]=PP27 , s2[10]=PP27 , s2[11]=PP27 , s2[12]=PP27 , s2[13]=PP27 , s2[14]=PP27 , s2[15]=PP27 , o1=S10 , o2=C10);
+
+	//Reduces (PP3 , PP4 , PP5) to (S11 , C11).
+	RED32(s0[0]=temp , s0[1]=temp , s0[2]=temp , s0[3]=PP30 , s0[4]=PP31 , s0[5]=PP32 , s0[6]=PP33 , s0[7]=PP34 , s0[8]=PP35 , s0[9]=PP36 , s0[10]=PP37 , s0[11]=PP37 , s0[12]=PP37 , s0[13]=PP37 , s0[14]=PP37 , s0[15]=PP37 , s1[0]=temp , s1[1]=temp , s1[2]=temp , s1[3]=temp , s1[4]=PP40 , s1[5]=PP41 , s1[6]=PP42 , s1[7]=PP43 , s1[8]=PP44 , s1[9]=PP45 , s1[10]=PP46 , s1[11]=PP47 , s1[12]=PP47 , s1[13]=PP47 , s1[14]=PP47 , s1[15]=PP47 , s2[0]=temp , s2[1]=temp , s2[2]=temp , s2[3]=temp , s2[4]=temp , s2[5]=PP50 , s2[6]=PP51 , s2[7]=PP52 , s2[8]=PP53 , s2[9]=PP54 , s2[10]=PP55 , s2[11]=PP56 , s2[12]=PP57 , s2[13]=PP57 , s2[14]=PP57 , s2[15]=PP57 , o1=S11 , o2=C11);
+
+	//Reduces ((PP6 , PP7 , 00000000) or (PP6 , PP7' , 00000001)) to (S21 , C21).
+	RED32(s0[0]=temp , s0[1]=temp , s0[2]=temp , s0[3]=temp , s0[4]=temp , s0[5]=temp , s0[6]=PP60 , s0[7]=PP61 , s0[8]=PP62 , s0[9]=PP63 , s0[10]=PP64 , s0[11]=PP65 , s0[12]=PP66 , s0[13]=PP67 , s0[14]=PP67 , s0[15]=PP67 , s1[0]=temp , s1[1]=temp , s1[2]=temp , s1[3]=temp , s1[4]=temp , s1[5]=temp , s1[6]=temp , s1[7]=xPP70 , s1[8]=xPP71 , s1[9]=xPP72 , s1[10]=xPP73 , s1[11]=xPP74 , s1[12]=xPP75 , s1[13]=xPP76 , s1[14]=xPP77 , s1[15]=xPP77 , s2[0]=temp , s2[1]=temp , s2[2]=temp , s2[3]=temp , s2[4]=temp , s2[5]=temp , s2[6]=temp , s2[7]=nottemp2 , s2[8]=temp , s2[9]=temp , s2[10]=temp , s2[11]=temp , s2[12]=temp , s2[13]=temp , s2[14]=temp , s2[15]=temp , o1=S13 , o2=C13);
+
+	//Reduces (S11 , C13 , S13) to (S21 , C21).
+	RED32(s0=S11 , s1=C13 , s2=S13 , o1=S21 , o2=C21);
+
+	//Reduces (C10 , S10 , C11) to (S20 , C20).
+	RED32(s0=C10 , s1=S10 , s2=C11 , o1=S20 , o2=C20);
+
+	//Reduces (C20 , S20 , C21) to (S30 , C30).
+	RED32(s0=C20 , s1=S20 , s2=C21 , o1=S30 , o2=C30);
+
+	//Reduces (C30 , S30 , S21) to (S40 , C40).
+	RED32(s0=C30 , s1=S30 , s2=S21 , o1=S40 , o2=C40);
+
+	//Computes Z=S40+C40.
+	HCLA-16(X=S40 , Y=C40 ,CS=temp , U=temp , S[0]=Z[0] , S[1]=Z[1] , S[2]=Z[2] , S[3]=Z[3] , S[4]=Z[4] , S[5]=Z[5] , S[6]=Z[6] , S[7]=z7 , S[8]=z8 , S[9]=z9 , S[10]=z10 , S[11]=z11 , S[12]=z12 , S[13]=z13 , S[14]=z14 , S[15]=z15);
+
+	//Complements z7,z8,z9,z10,z11,z12,z13,z14,z15.
+	Not(in=z7 , out=notz7);
+	Not(in=z8 , out=notz8);
+	Not(in=z9 , out=notz9);
+	Not(in=z10 , out=notz10);
+	Not(in=z11 , out=notz11);
+	Not(in=z12 , out=notz12);
+	Not(in=z13 , out=notz13);
+	Not(in=z14 , out=notz14);
+	Not(in=z15 , out=notz15);
+
+	//Computes (XNOR(XX[7],YY[7])).(z7+z8+z9+z10+z11+z12+z13+z14+z15).
+	XNOR(a=XX[7] , b=YY[7] , out=x1);
+	OR8(x1=z8 , x2=z9 , x3=z10 , x4=z11 , x5=z12 , x6=z13 , x7=z14 , x8=z15 , y=s11);
+	Or(a=s11 , b=z7 , out=s12);
+	And(a=x1 , b=s12 , out=s1);
+	
+	//Computes (XOR(XX[7],YY[7])).(z7'+z8'+z9'+z10'+z11'+z12'+z13'+z14'+z15').
+	XOR(a=XX[7] , b=YY[7] , out=x2);
+	OR8(x1=notz8 , x2=notz9 , x3=notz10 , x4=notz11 , x5=notz12 , x6=notz13 , x7=notz14 , x8=notz15 , y=s21);
+	Or(a=s21 , b=notz7 , out=s22);
+	And(a=x2 , b=s22 , out=s2);
+	
+	//Computes (XNOR(XX[7],YY[7])).(z7+z8+z9+z10+z11+z12+z13+z14+z15) + (XOR(XX[7],YY[7])).(z7'+z8'+z9'+z10'+z11'+z12'+z13'+z14'+z15').
+	Or(a=s1 , b=s2 , out=OF);
+
+	And(a=z7 , b=z7 , out=Z[7]);
+
+}
