@@ -1,0 +1,12 @@
+/* The CHIP [RAM64] stores data. */
+
+CHIP Memory
+{
+	IN in[16], load, address[15];
+  	OUT out[16];
+
+	PARTS:
+
+	// Stores data in data memory [RAM64].
+    	RAM64(in=in, load=load, address=address[0..5], out=out);
+}

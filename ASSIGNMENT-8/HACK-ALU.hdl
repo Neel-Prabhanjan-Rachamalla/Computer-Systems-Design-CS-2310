@@ -1,0 +1,46 @@
+/* The CHIP [HACK ALU] performs many ALU functions. */
+
+CHIP HACK-ALU
+{
+	IN X[16],Y[16],ZX,NX,ZY,NY,F,NO;
+	OUT out[16],ZR,NG;
+
+	PARTS:
+
+	//Computes 0 and 1.
+	XOR(a=X[0] , b=X[0] , out=temp);
+	Not(in=temp , out=nottemp);
+
+	//Computes X if ZX=0 , 0 if ZX=1.
+	MUX2-16(x0=X , x1[0]=temp , x1[1]=temp , x1[2]=temp , x1[3]=temp , x1[4]=temp , x1[5]=temp , x1[6]=temp , x1[7]=temp , x1[8]=temp , x1[9]=temp , x1[10]=temp , x1[11]=temp , x1[12]=temp , x1[13]=temp , x1[14]=temp , x1[15]=temp , S0=ZX , y[0]=CH00 , y[1]=CH01 , y[2]=CH02 , y[3]=CH03 , y[4]=CH04 , y[5]=CH05 , y[6]=CH06 , y[7]=CH07 , y[8]=CH08 , y[9]=CH09 , y[10]=CH010 , y[11]=CH011 , y[12]=CH012 , y[13]=CH013 , y[14]=CH014 , y[15]=CH015);
+	//Computes Y if ZY=0 , 0 if ZY=1.
+	MUX2-16(x0=Y , x1[0]=temp , x1[1]=temp , x1[2]=temp , x1[3]=temp , x1[4]=temp , x1[5]=temp , x1[6]=temp , x1[7]=temp , x1[8]=temp , x1[9]=temp , x1[10]=temp , x1[11]=temp , x1[12]=temp , x1[13]=temp , x1[14]=temp , x1[15]=temp , S0=ZY , y[0]=CH10 , y[1]=CH11 , y[2]=CH12 , y[3]=CH13 , y[4]=CH14 , y[5]=CH15 , y[6]=CH16 , y[7]=CH17 , y[8]=CH18 , y[9]=CH19 , y[10]=CH110 , y[11]=CH111 , y[12]=CH112 , y[13]=CH113 , y[14]=CH114 , y[15]=CH115);
+
+	//Computes X if ZX=0 and NX=0 , X' if ZX=0 and NX=1 , 0 if ZX=1 and NX=0 , -1 if ZX=1 and NX=1.  
+	XOR-16(x[0]=CH00 , x[1]=CH01 , x[2]=CH02 , x[3]=CH03 , x[4]=CH04 , x[5]=CH05 , x[6]=CH06 , x[7]=CH07 , x[8]=CH08 , x[9]=CH09 , x[10]=CH010 , x[11]=CH011 , x[12]=CH012 , x[13]=CH013 , x[14]=CH014 , x[15]=CH015 , y[0]=NX , y[1]=NX , y[2]=NX , y[3]=NX , y[4]=NX , y[5]=NX , y[6]=NX , y[7]=NX , y[8]=NX , y[9]=NX , y[10]=NX , y[11]=NX , y[12]=NX , y[13]=NX , y[14]=NX , y[15]=NX , z[0]=P0 , z[1]=P1 , z[2]=P2 , z[3]=P3 , z[4]=P4 , z[5]=P5 , z[6]=P6 , z[7]=P7 , z[8]=P8 , z[9]=P9 , z[10]=P10 , z[11]=P11 , z[12]=P12 , z[13]=P13 , z[14]=P14 , z[15]=P15);
+	//Computes Y if ZY=0 and NY=0 , Y' if ZY=0 and NY=1 , 0 if ZY=1 and NY=0 , -1 if ZY=1 and NY=1.
+	XOR-16(x[0]=CH10 , x[1]=CH11 , x[2]=CH12 , x[3]=CH13 , x[4]=CH14 , x[5]=CH15 , x[6]=CH16 , x[7]=CH17 , x[8]=CH18 , x[9]=CH19 , x[10]=CH110 , x[11]=CH111 , x[12]=CH112 , x[13]=CH113 , x[14]=CH114 , x[15]=CH115 , y[0]=NY , y[1]=NY , y[2]=NY , y[3]=NY , y[4]=NY , y[5]=NY , y[6]=NY , y[7]=NY , y[8]=NY , y[9]=NY , y[10]=NY , y[11]=NY , y[12]=NY , y[13]=NY , y[14]=NY , y[15]=NY , z[0]=Q0 , z[1]=Q1 , z[2]=Q2 , z[3]=Q3 , z[4]=Q4 , z[5]=Q5 , z[6]=Q6 , z[7]=Q7 , z[8]=Q8 , z[9]=Q9 , z[10]=Q10 , z[11]=Q11 , z[12]=Q12 , z[13]=Q13 , z[14]=Q14 , z[15]=Q15);
+
+	//Computes P+Q.
+	ADDER-16(X[0]=P0 , X[1]=P1 , X[2]=P2 , X[3]=P3 , X[4]=P4 , X[5]=P5 , X[6]=P6 , X[7]=P7 , X[8]=P8 , X[9]=P9 , X[10]=P10 , X[11]=P11 , X[12]=P12 , X[13]=P13 , X[14]=P14 , X[15]=P15 , Y[0]=Q0 , Y[1]=Q1 , Y[2]=Q2 , Y[3]=Q3 , Y[4]=Q4 , Y[5]=Q5 , Y[6]=Q6 , Y[7]=Q7 , Y[8]=Q8 , Y[9]=Q9 , Y[10]=Q10 , Y[11]=Q11 , Y[12]=Q12 , Y[13]=Q13 , Y[14]=Q14 , Y[15]=Q15 , CS=temp , U=nottemp , S[0]=CH30 , S[1]=CH31 , S[2]=CH32 , S[3]=CH33 , S[4]=CH34 , S[5]=CH35 , S[6]=CH36 , S[7]=CH37 , S[8]=CH38 , S[9]=CH39 , S[10]=CH310 , S[11]=CH311 , S[12]=CH312 , S[13]=CH313 , S[14]=CH314 , S[15]=CH315);
+	//Computes bitwise-and of P&Q.
+	AND-16(x[0]=P0 , x[1]=P1 , x[2]=P2 , x[3]=P3 , x[4]=P4 , x[5]=P5 , x[6]=P6 , x[7]=P7 , x[8]=P8 , x[9]=P9 , x[10]=P10 , x[11]=P11 , x[12]=P12 , x[13]=P13 , x[14]=P14 , x[15]=P15 , y[0]=Q0 , y[1]=Q1 , y[2]=Q2 , y[3]=Q3 , y[4]=Q4 , y[5]=Q5 , y[6]=Q6 , y[7]=Q7 , y[8]=Q8 , y[9]=Q9 , y[10]=Q10 , y[11]=Q11 , y[12]=Q12 , y[13]=Q13 , y[14]=Q14 , y[15]=Q15 , z[0]=CH40 , z[1]=CH41 , z[2]=CH42 , z[3]=CH43 , z[4]=CH44 , z[5]=CH45 , z[6]=CH46 , z[7]=CH47 , z[8]=CH48 , z[9]=CH49 , z[10]=CH410 , z[11]=CH411 , z[12]=CH412 , z[13]=CH413 , z[14]=CH414 , z[15]=CH415);
+
+	//Computes P+Q if F=1 , P&Q if F=0.
+	MUX2-16(x0[0]=CH40 , x0[1]=CH41 , x0[2]=CH42 , x0[3]=CH43 , x0[4]=CH44 , x0[5]=CH45 , x0[6]=CH46 , x0[7]=CH47 , x0[8]=CH48 , x0[9]=CH49 , x0[10]=CH410 , x0[11]=CH411 , x0[12]=CH412 , x0[13]=CH413 , x0[14]=CH414 , x0[15]=CH415 , x1[0]=CH30 , x1[1]=CH31 , x1[2]=CH32 , x1[3]=CH33 , x1[4]=CH34 , x1[5]=CH35 , x1[6]=CH36 , x1[7]=CH37 , x1[8]=CH38 , x1[9]=CH39 , x1[10]=CH310 , x1[11]=CH311 , x1[12]=CH312 , x1[13]=CH313 , x1[14]=CH314 , x1[15]=CH315 , S0=F , y[0]=R0 , y[1]=R1 , y[2]=R2 , y[3]=R3 , y[4]=R4 , y[5]=R5 , y[6]=R6 , y[7]=R7 , y[8]=R8 , y[9]=R9 , y[10]=R10 , y[11]=R11 , y[12]=R12 , y[13]=R13 , y[14]=R14 , y[15]=R15);
+
+	//Computes P&Q if F=0 and NO=0 , (P&Q)' if F=0 and NO=1 , P+Q if F=1 and NO=0 , (P+Q)' if F=1 and NO=1. 
+	XOR-16(x[0]=R0 , x[1]=R1 , x[2]=R2 , x[3]=R3 , x[4]=R4 , x[5]=R5 , x[6]=R6 , x[7]=R7 , x[8]=R8 , x[9]=R9 , x[10]=R10 , x[11]=R11 , x[12]=R12 , x[13]=R13 , x[14]=R14 , x[15]=R15 , y[0]=NO , y[1]=NO , y[2]=NO , y[3]=NO , y[4]=NO , y[5]=NO , y[6]=NO , y[7]=NO , y[8]=NO , y[9]=NO , y[10]=NO , y[11]=NO , y[12]=NO , y[13]=NO , y[14]=NO , y[15]=NO , z[0]=NOTOUT0 , z[1]=NOTOUT1 , z[2]=NOTOUT2 , z[3]=NOTOUT3 , z[4]=NOTOUT4 , z[5]=NOTOUT5 , z[6]=NOTOUT6 , z[7]=NOTOUT7 , z[8]=NOTOUT8 , z[9]=NOTOUT9 , z[10]=NOTOUT10 , z[11]=NOTOUT11 , z[12]=NOTOUT12 , z[13]=NOTOUT13 , z[14]=NOTOUT14 , z[15]=NOTOUT15);
+
+	//Computes ZR=1 if OUT=0 , ZR=0 if OUT!=0.
+	OR8(x1=NOTOUT0 , x2=NOTOUT1 , x3=NOTOUT2 , x4=NOTOUT3 , x5=NOTOUT4 , x6=NOTOUT5 , x7=NOTOUT6 , x8=NOTOUT7 , y=NOTZR0);
+	OR8(x1=NOTOUT8 , x2=NOTOUT9 , x3=NOTOUT10 , x4=NOTOUT11 , x5=NOTOUT12 , x6=NOTOUT13 , x7=NOTOUT14 , x8=NOTOUT15 , y=NOTZR1);
+	Or(a=NOTZR0 , b=NOTZR1 , out=NOTZR);
+	Not(in=NOTZR , out=ZR);
+
+	//Computes NG=1 if OUT<0 , NG=0 if OUT>=0. 
+	And(a=NOTOUT15 , b=NOTOUT15 , out=NG);
+	
+	//Computes OUT.
+	AND-16(x[0]=NOTOUT0 , x[1]=NOTOUT1 , x[2]=NOTOUT2 , x[3]=NOTOUT3 , x[4]=NOTOUT4 , x[5]=NOTOUT5 , x[6]=NOTOUT6 , x[7]=NOTOUT7 , x[8]=NOTOUT8 , x[9]=NOTOUT9 , x[10]=NOTOUT10 , x[11]=NOTOUT11 , x[12]=NOTOUT12 , x[13]=NOTOUT13 , x[14]=NOTOUT14 , x[15]=NOTOUT15 , y[0]=NOTOUT0 , y[1]=NOTOUT1 , y[2]=NOTOUT2 , y[3]=NOTOUT3 , y[4]=NOTOUT4 , y[5]=NOTOUT5 , y[6]=NOTOUT6 , y[7]=NOTOUT7 , y[8]=NOTOUT8 , y[9]=NOTOUT9 , y[10]=NOTOUT10 , y[11]=NOTOUT11 , y[12]=NOTOUT12 , y[13]=NOTOUT13 , y[14]=NOTOUT14 , y[15]=NOTOUT15 , z=out);
+}

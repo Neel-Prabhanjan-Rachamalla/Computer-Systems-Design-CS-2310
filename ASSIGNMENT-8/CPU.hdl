@@ -1,0 +1,55 @@
+/* The CHIP [HACK-CPU] performs the function of CPU. */
+
+CHIP CPU
+{
+	IN  inM[16],instruction[16],reset;
+
+    	OUT outM[16],writeM,addressM[15],pc[15];
+
+    	PARTS:
+
+    	// Instruction decoder.
+    	// Control signal for MUX1.
+    	Not(in=instruction[15] , out=CMUX1);
+	// Control signal for MUX1.
+    	And(a=instruction[15] , b=instruction[12] , out=CMUX2);
+    	And(a=instruction[15] , b=instruction[5] , out=ip);
+	// Control signal for A-Register.
+    	Or(a=CMUX1 , b=ip , out=CAR);
+	// Control signal for D-Register.
+    	And(a=instruction[15] , b=instruction[4] , out=CDR);
+
+    	// A register.
+    	MUX2-16(x0=aluout, x1=instruction, S0=CMUX1, y=toareg);
+    	ARegister(in=toareg, load=CAR, out=aregout, out[0..14]=addressM);
+
+    	// D register and the ALU.
+    	MUX2-16(x0=aregout, x1=inM, S0=CMUX2, y=inputsel);
+
+    	HACK-ALU(X=dregout, Y=inputsel, ZX=instruction[11], NX=instruction[10], ZY=instruction[9], NY=instruction[8], 
+    	F=instruction[7], NO=instruction[6], out=aluout, ZR=zrout, NG=ngout, out=outM);
+    	And(a=instruction[15], b=instruction[3], out=writeM);
+
+    	DRegister(in=aluout, load=CDR, out=dregout);
+
+    	// Generates jump conditions.
+    	Or(a=zrout, b=ngout, out=leqzero);
+    	Not(in=leqzero, out=posout);
+	//Computes JGT i.e if out>0 jump.
+    	And(a=instruction[0], b=posout, out=jgt);
+	//Computes JEQ i.e if out=0 jump.
+    	And(a=instruction[1], b=zrout, out=jeq);
+	//Computes JLT i.e if out<0 jump.
+    	And(a=instruction[2], b=ngout, out=jlt);
+	//Computes JLE i.e if out<=0 jump.
+    	Or(a=jeq, b=jlt, out=jle);
+	//Computes JMP i.e jump for all conditions.
+    	Or(a=jgt, b=jle, out=jmp);
+
+	// Generates inputs for PC.
+    	And(a=jmp, b=instruction[15], out=dojump);
+    	Not(in=dojump, out=nojump);
+
+	// Program Counter.
+    	PC(in=aregout, load=dojump, inc=nojump, reset=reset, out[0..14]=pc);
+}
